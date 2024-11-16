@@ -9,10 +9,15 @@ class Building extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'address'];
+    protected $fillable = ['name', 'owner_name', 'owner_phone', 'pincode',];
 
     public function floors()
     {
-        return $this->hasMany(Floor::class);
+        return $this->hasMany(Floor::class,'building_id');
+    }
+
+    public function rooms()
+    {
+        return $this->hasManyThrough(Room::class, Floor::class, 'building_id', 'floor_id');
     }
 }

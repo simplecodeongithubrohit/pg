@@ -28,11 +28,13 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 //rent
+
 Route::get('/buildings', [RentController::class, 'index']);
 Route::post('/buildings', [RentController::class, 'store']);
 Route::get('/buildings/{building}', [RentController::class, 'show']);
 Route::put('/buildings/{building}', [RentController::class, 'update']);
 Route::delete('/buildings/{building}', [RentController::class, 'destroy']);
+
 
 //floor
 

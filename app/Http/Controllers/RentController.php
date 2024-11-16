@@ -4,46 +4,67 @@ namespace App\Http\Controllers;
 
 use App\Models\Building;
 use Illuminate\Http\Request;
+use App\Rules\Phone;
 
 class RentController extends Controller
 {
     // Display a listing of the buildings
     public function index()
     {
-        return Building::all();
+        return response()->json(Building::all(), 200);
     }
-
-    
 
     // Store a newly created building in storage
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255'
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'owner_name' => 'nullable|string',
+            'owner_phone' => 'nullable|string',
+            'pincode' => 'nullable|integer',
         ]);
 
-        $building = Building::create($request->all());
-        return response()->json($building, 201);
+        $building = Building::create($validatedData);
+
+        return response()->json([
+            'message' => 'Building created successfully!',
+            'data' => $building,
+        ], 201);
     }
 
     // Display the specified building
     public function show(Building $building)
     {
-        return response()->json($building);
+        // Load related rooms through floors
+        $building->load('rooms');
+
+        return response()->json([
+            'id' => $building->id,
+            'name' => $building->name,
+            'owner_name' => $building->owner_name,
+            'owner_phone' => $building->owner_phone,
+            'pincode' => $building->pincode,
+            'address' => $building->address,
+            'rooms' => $building->rooms, // Include rooms data
+        ], 200);
+
+        // return response()->json($building, 200);
     }
+
 
 
     // Update the specified building in storage
     public function update(Request $request, Building $building)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255'
+            'owner_name' => 'required|string|max:255',
+            'owner_phone' => ['required', new Phone],
+            'pincode' => 'required|integer'
         ]);
 
-        $building->update($request->all());
-        return response()->json($building);
+        $building->update($validatedData);
+        return response()->json($building, 200);
     }
 
     // Remove the specified building from storage

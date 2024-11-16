@@ -16,18 +16,21 @@ class RoomController extends Controller
     public function store(Request $request, Floor $floor)
     {
         $validatedData = $request->validate([
-            'type' => 'required|string|max:255',
+            
             'capacity' => 'required|integer',
             'price' => 'required|numeric',
-            'availability' => 'required|boolean'
+            'availability' => 'required|boolean',
+            'unit_type' => 'required|string|max:255',
+            'sharing_type' =>'required|string|max:255',
         ]);
 
         $room = new Room();
         $room->floor_id = $floor->id;
-        $room->type = $request->type;
         $room->capacity = $request->capacity;
         $room->price = $request->price;
         $room->availability = $request->availability;
+        $room->unit_type = $request->unit_type;
+        $room->sharing_type = $request->sharing_type;
         $room->save();
 
         return response()->json($room, 201);
@@ -41,10 +44,12 @@ class RoomController extends Controller
     public function update(Request $request, Floor $floor, Room $room)
     {
         $validatedData = $request->validate([
-            'type' => 'required|string|max:255',
+           
             'capacity' => 'required|integer',
             'price' => 'required|numeric',
-            'availability' => 'required|boolean'
+            'availability' => 'required|boolean',
+            'unit_type' => 'required|string|max:255',
+            'sharing_type' =>'required|string|max:255',
         ]);
 
         $room->update($validatedData);
